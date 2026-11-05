@@ -24,7 +24,7 @@
     <MASM Include="Rendering.asm">
       <Filter>Source Files</Filter>
     </MASM>
-    <MASM Include="RenderingTest.asm">
+    <MASM Include="Logic.asm">
       <Filter>Source Files</Filter>
     </MASM>
   </ItemGroup>
