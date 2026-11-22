@@ -20,11 +20,37 @@ ExitKey = 'q'
     finalScoreText BYTE "Your final score: ", 0
     exitPromptText BYTE "Press any key to exit...", 0
     gameWonText BYTE "YOU WIN! All Invaders have been defeated!",0
+    startTitleText BYTE "=====SPACE INVADERS=====",0
+    startInstructionsText BYTE "Defend Earth from alien invasion! Use A/D or Left/Right Arrow keys to move, Spacebar to fire.",0
+    startPromptText BYTE "Press any key to start...",0
 .code
 main PROC
     invoke GetStdHandle, -11
     mov consoleHandle, eax
     invoke SetConsoleCursorInfo, consoleHandle, ADDR cursorInfo
+    call clrscr
+    mov eax, 11
+    call SetTextColor
+    mov edx, offset startTitleText
+    call WriteString
+    call Crlf
+    call Crlf
+    mov eax, 15
+    call SetTextColor
+    mov edx, offset startInstructionsText
+    call WriteString
+    call Crlf
+    call Crlf
+    mov eax, 14
+    call SetTextColor
+    mov edx, offset startPromptText
+    call WriteString
+    WaitForStart:
+        call ReadKey
+        jz WaitForStart
+        mov eax, 7
+        call SetTextColor
+        call Clrscr
 	call initializeInvaders
 	mov playerX,50
 	mov playerY,25
