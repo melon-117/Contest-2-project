@@ -3,6 +3,7 @@
 .stack 4096
 INCLUDE Irvine32.inc
 INCLUDE SpaceGame.inc
+PUBLIC resetLogic
 ExitProcess proto,dwExitCode:dword
 
 .data
@@ -195,4 +196,14 @@ updateInvaderBullets PROC USES eax esi edi
 	UpdateBulletsDone:
 		ret
 updateInvaderBullets ENDP
+resetLogic PROC 
+	mov bulletCount, 0
+	mov invaderCount, 0
+    mov invaderFireCounter, 0
+	mov bestShooterOffset, 0
+	mov bestShooterY, 0
+    mov currentFireColumn, 0
+	mov rowsToCheck, 0
+    ret
+resetLogic ENDP
 END 

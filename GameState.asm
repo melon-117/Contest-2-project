@@ -5,6 +5,7 @@
 INCLUDE Irvine32.inc
 ExitProcess proto,dwExitCode:dword
 PUBLIC initializeInvaders
+PUBLIC resetGameState
 ;file accesss to varibles 
 PUBLIC playerX, playerY, score, lives, level, gameStatus
 PUBLIC invaders, invaderX, invaderY, invaderAlive, invaderDirection, remainingInvaders, selectedInvader
@@ -138,5 +139,35 @@ moveInvaders PROC USES eax ebx edx esi
 	Return:
 	ret
 moveInvaders ENDP
-
+resetGameState PROC
+	; Reset player position
+	mov playerX, 50
+	mov playerY, 25
+	; Reset score and lives
+	mov score, 0
+	mov lives, 3
+	; Reset level and game status
+	mov level, 1
+	mov gameStatus, 1
+	; Reset invaders
+	mov remainingInvaders, 15
+	mov invaderDirection, 1
+	mov invaderMoveDown, 0
+	mov selectedInvader, 0
+	; Deactivate all player bullets
+	mov playerBulletActive[0], 0
+	mov playerBulletActive[4], 0
+	mov playerBulletActive[8], 0
+	mov playerBulletActive[12], 0
+	mov playerBulletActive[16], 0
+	; Deactivate all invader bullets
+	mov invaderBulletActive[0], 0
+	mov invaderBulletActive[4], 0
+	mov invaderBulletActive[8], 0
+	mov invaderBulletActive[12], 0
+	mov invaderBulletActive[16], 0
+	; Reinitialize invader positions
+	call initializeInvaders
+	ret
+resetGameState ENDP
 END

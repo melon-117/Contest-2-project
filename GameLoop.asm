@@ -4,6 +4,7 @@
 
 INCLUDE Irvine32.inc
 INCLUDE SpaceGame.inc
+resetLogic PROTO STDCALL
 ExitProcess proto,dwExitCode:dword
 TicksPerSec = 60
 MSPerTick = 1000 / TicksPerSec ; 1000 ms / 60 ticks per second
@@ -18,7 +19,7 @@ ExitKey = 'q'
 	cursorInfo DWORD 25, 0
     gameOverText BYTE "Game Over!", 0
     finalScoreText BYTE "Your final score: ", 0
-    exitPromptText BYTE "Press any key to exit...", 0
+    replayPromptText BYTE "Press Y to play again or N to quit...", 0
     gameWonText BYTE "YOU WIN! All Invaders have been defeated!",0
     startTitleText BYTE "=====SPACE INVADERS=====",0
     startInstructionsText BYTE "Defend Earth from alien invasion! Use A/D or Left/Right Arrow keys to move, Spacebar to fire.",0
@@ -54,8 +55,10 @@ main PROC
 	call initializeInvaders
 	mov playerX,50
 	mov playerY,25
-	call GetTickCount
-	mov currTime,eax
+    GameLoopStart:
+        mov totalTick,0
+	    call GetTickCount
+	    mov currTime,eax
 	; while game not over
 	L1:
 	call GetTickCount
@@ -128,8 +131,32 @@ main PROC
         mov eax, score
         call WriteDec
         call Crlf
-        mov edx, OFFSET exitPromptText
+        mov edx, OFFSET replayPromptText
         call WriteString
+    ReplayPromptLoop:
+        call ReadKey
+        jz ReplayPromptLoop
+        ;check for Y or y key
+        cmp al, 'y'
+        je ReplayGame
+        cmp al, 'Y'
+        je ReplayGame
+        ;check for N or n key
+        cmp al, 'n'
+        je exitCurrentGame
+        cmp al, 'N'
+        je exitCurrentGame
+        ;ignore any other key and loop back to prompt
+        jmp ReplayPromptLoop
+    ReplayGame:
+        ;reset game state and logic
+        call resetGameState
+        call resetLogic
+        ;clear the previous end-game screen
+        mov eax, 7
+        call SetTextColor
+        call Clrscr
+        jmp GameLoopStart
      waitForKeyPress:
         call ReadKey
         jz waitForKeyPress
@@ -207,5 +234,4 @@ fireBullet:
 processed:
     ret
 ProcessUserInput ENDP
-
 END main

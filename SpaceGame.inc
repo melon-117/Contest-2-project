@@ -48,3 +48,4 @@ invaderBulletCollision PROTO STDCALL
 fireInvaderBullet PROTO STDCALL
 updateInvaderBullets PROTO STDCALL
 moveInvaders PROTO STDCALL
+resetGameState PROTO STDCALL
