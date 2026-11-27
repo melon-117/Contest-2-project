@@ -10,10 +10,12 @@ ExitProcess proto,dwExitCode:dword
 ScoreLabel BYTE "Score: ", 0
 LivesLabel BYTE " Lives: ", 0
 LevelLabel BYTE " Level: ", 0
+HighScoreLabel BYTE " High Score: ", 0
 prevScore DWORD 0 ; scrappy solution to HUD flickering. Saves and checks against previous value to avoid unnecessary update
 prevLives DWORD 0
 prevLevel DWORD 0
 prevPlayerX DWORD 0
+prevHighScore DWORD 0
 
 .code
 DrawPlayer PROC USES eax edx
@@ -155,6 +157,9 @@ DrawHUD PROC USES eax ebx ecx edx
 	mov eax,prevLevel
 	cmp level,eax
 	jne Continue
+	mov eax,prevHighScore
+	cmp highscore,eax
+	jne Continue
 	ret ; return if no updates
 
 	Continue:
@@ -181,6 +186,11 @@ DrawHUD PROC USES eax ebx ecx edx
 	call WriteString
 	mov eax, level
 	mov prevLevel,eax
+	call WriteDec
+	mov edx, OFFSET HighScoreLabel
+	call WriteString
+	mov eax, highscore
+	mov prevHighScore,eax
 	call WriteDec
 	;Set invader color 
 	mov eax, 7

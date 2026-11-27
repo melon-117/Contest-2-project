@@ -29,6 +29,7 @@ EXTERN remainingInvaders:DWORD
 EXTERN selectedInvader:DWORD
 EXTERN gameStatus:DWORD
 EXTERN score:DWORD
+EXTERN highscore:DWORD
 EXTERN lives:DWORD
 EXTERN level:DWORD
 PUBLIC DrawPlayer

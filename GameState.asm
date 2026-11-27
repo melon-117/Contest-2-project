@@ -7,7 +7,7 @@ ExitProcess proto,dwExitCode:dword
 PUBLIC initializeInvaders
 PUBLIC resetGameState
 ;file accesss to varibles 
-PUBLIC playerX, playerY, score, lives, level, gameStatus
+PUBLIC playerX, playerY, score, highscore,lives, level, gameStatus
 PUBLIC invaders, invaderX, invaderY, invaderAlive, invaderDirection, remainingInvaders, selectedInvader
 PUBLIC playerBulletSlot, playerBulletX, playerBulletY, playerBulletActive
 PUBLIC invaderBulletSlot, invaderBulletX, invaderBulletY, invaderBulletActive
@@ -17,6 +17,7 @@ PUBLIC screenWidth, screenHeight, screenLeftBound, screenRightBound, screenTopBo
 	playerX DWORD 0
 	playerY DWORD 0
 	score DWORD 0
+	highscore DWORD 0
 	lives DWORD 3
 	level DWORD 1
 	;invaders

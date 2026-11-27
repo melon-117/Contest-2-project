@@ -21,11 +21,42 @@ ExitKey = 'q'
     finalScoreText BYTE "Your final score: ", 0
     replayPromptText BYTE "Press Y to play again or N to quit...", 0
     gameWonText BYTE "YOU WIN! All Invaders have been defeated!",0
+    highScoreFile BYTE "highscore.dat",0
+    fileHandle DWORD ?
+    bytesRead DWORD ?
+    bytesWritten DWORD ?
     startTitleText BYTE "=====SPACE INVADERS=====",0
     startInstructionsText BYTE "Defend Earth from alien invasion! Use A/D or Left/Right Arrow keys to move, Spacebar to fire.",0
     startPromptText BYTE "Press any key to start...",0
 .code
 main PROC
+    invoke GetStdHandle, -11
+    ;load the high score from file
+    mov highScore, 0
+    mov edx, offset highScoreFile
+    call OpenInputFile
+    ;if the file does not exist, create it and write 0 to it
+    cmp eax, -1
+    je HighScoreLoaded
+    ;store file handle in fileHandle variable
+    mov fileHandle, eax
+    mov eax, fileHandle
+    mov edx, offset highscore
+    mov ecx, 4
+    call ReadFromFile
+    ;check wheather file read failed
+    jc HighScoreReadFailed
+    ; make sure all 4 bytes were read
+    cmp eax, 4
+    jne HighScoreReadFailed
+    jmp CloseHighScoreFile
+    HighScoreReadFailed:
+        ;if read failed, set high score to 0
+        mov highscore, 0
+    CloseHighScoreFile:
+        mov eax, fileHandle
+        call CloseFile
+    HighScoreLoaded:
     invoke GetStdHandle, -11
     mov consoleHandle, eax
     invoke SetConsoleCursorInfo, consoleHandle, ADDR cursorInfo
@@ -123,6 +154,31 @@ main PROC
         call WriteString
         jmp ShowFinalScore
     ShowFinalScore:
+        ; Check whether the current score beats the high score
+        mov eax, score
+        cmp eax, highScore
+        jbe DisplayFinalScore
+
+        ; Save the new high score in memory
+        mov highScore, eax
+        mov edx, offset highScoreFile
+        call CreateOutputFile
+        ; If creating the file failed, continue to final score display
+        cmp eax, -1
+        je DisplayFinalScore
+        ; Store file handle in fileHandle variable
+        mov fileHandle, eax
+        ; Write the new high score to the file
+        mov eax, fileHandle
+        mov edx, offset highscore
+        mov ecx, 4
+        call WriteToFile
+        mov bytesWritten, eax ; Store the number of bytes written
+        ;close the file after writing
+        mov eax, fileHandle
+        call CloseFile
+    DisplayFinalScore:
+        ; Display final score
         mov eax, 15
         call SetTextColor
         call Crlf
@@ -131,6 +187,8 @@ main PROC
         mov eax, score
         call WriteDec
         call Crlf
+
+        ; Display replay prompt
         mov edx, OFFSET replayPromptText
         call WriteString
     ReplayPromptLoop:
